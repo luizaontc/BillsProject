@@ -1,4 +1,5 @@
 ﻿using Bills.Domain.Dto;
+using Bills.Domain.Dto.Users;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,11 @@ namespace Bills.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser([FromBody] User user)
+        public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto dto)
         {
             try
             {
-                await _userService.CreateUser(user);
+                await _userService.CreateUser(dto);
                 return Ok("User created!");
             }
             catch (Exception ex)

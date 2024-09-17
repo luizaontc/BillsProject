@@ -17,9 +17,10 @@ builder.Services.AddDbContext<BillsProjectContext>(options =>
 // Registro de outros serviços
 builder.Services.AddScoped<IBillsService, BillsService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
