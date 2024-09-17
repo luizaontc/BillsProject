@@ -14,13 +14,12 @@ public partial class Bill
     public DateOnly DueDate { get; set; }
 
     public int? Installments { get; set; }
-    public int? InstallmentsNumber { get; set; }
 
     public decimal? Amount { get; set; }
 
     public int? UserId { get; set; }
 
-    public bool? Status { get; set; }
+    public int? Status { get; set; }
 
     public virtual ICollection<InstallmentBill> InstallmentBills { get; set; } = new List<InstallmentBill>();
 

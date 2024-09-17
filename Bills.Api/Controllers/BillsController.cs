@@ -1,4 +1,5 @@
 ﻿using Bills.Domain.Dto;
+using Bills.Domain.Dto.Bills;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +19,22 @@ namespace Bills.Api.Controllers
             _billsService = billsService;
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Bill>> CreateBill([FromBody] CreateBillDto dto)
+        {
+            try
+            {
+                await _billsService.CreateBill(dto);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
         [HttpGet]
-        public async Task<IActionResult> GetAllBills([FromBody] FilterDto dto)
+        public async Task<IActionResult> GetAllBills([FromQuery] FilterDto dto)
         {
             try
             {
@@ -59,26 +74,12 @@ namespace Bills.Api.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<ActionResult<Bill>> CreateBill(Bill bill)
-        {
-            try
-            {
-                _billsService.CreateBill(bill);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message.ToString());
-            }
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBill(int id, Bill bill)
         {
             try
             {
-                var billReturn = _billsService.UpdateBill(id, bill);
+                var billReturn = await _billsService.UpdateBill(id, bill);
 
                 if (billReturn == "Ok")
                     return Ok(billReturn);
@@ -100,7 +101,7 @@ namespace Bills.Api.Controllers
         {
             try
             {
-                var bill = _billsService.DeleteBill(id);
+                var bill = await _billsService.DeleteBill(id);
 
                 if (bill == "Ok")
                     return Ok(bill);

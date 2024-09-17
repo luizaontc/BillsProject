@@ -1,13 +1,8 @@
 ﻿using Bills.Domain.Dto;
+using Bills.Domain.Dto.Bills;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bills.Service.Services
 {
@@ -20,61 +15,78 @@ namespace Bills.Service.Services
             _context = context;
         }
 
-        public string CreateBill(Bill bill)
+        public async Task<string> CreateBill(CreateBillDto dto)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    _context.Bills.Add(bill);
-                    _context.SaveChanges();
+                    Bill bill = new Bill()
+                    {
+                        BillsName = dto.billsName,
+                        Description = dto.description,
+                        Amount = dto.amount,
+                        DueDate = dto.dueDate,
+                        Status = dto.status,
+                        Installments = dto.installments,
+                        UserId = 1
+                    };
+                    await _context.Bills.AddAsync(bill);
+                    await _context.SaveChangesAsync();
 
                     List<InstallmentBill> lInstallmentBill = new List<InstallmentBill>();
 
-                    for (int i = 0; i < bill.Installments; i++)
+                    for (int i = 0; i < (dto.actualInstallmentNumber > 0 ? dto.actualInstallmentNumber + 1 : bill.Installments); i++)
                     {
                         InstallmentBill installmentBill = new InstallmentBill()
                         {
                             BillsId = bill.Id,
                             DueDate = CalcInstallment(bill.DueDate, i),
-                            InstallmentNumber = i + 1,
+                            InstallmentNumber = dto.actualInstallmentNumber > 0 ? dto.actualInstallmentNumber + i : i + 1,
                             Amount = bill.Amount / bill.Installments,
                             Status = true
                         };
                         lInstallmentBill.Add(installmentBill);
                     }
                     //bill.InstallmentBills = lInstallmentBill;
-                    _context.InstallmentBills.AddRange(lInstallmentBill);
+                    await _context.InstallmentBills.AddRangeAsync(lInstallmentBill);
 
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
 
                     return "Ok";
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                     throw;
                 }
             }
 
         }
-        public async Task<List<Bill>> GetAllBills(FilterDto dto)
+        public async Task<GetBillDto> GetAllBills(FilterDto dto)
         {
             try
             {
                 var bills = _context.Bills
                         .Include(b => b.InstallmentBills)
-                        .Where(b => b.InstallmentBills.Any(i => i.DueDate >= dto.initialDate && i.DueDate <= dto.endDate))
+                        .Where(b => b.InstallmentBills.Any(i => dto.initialDate != null ? i.DueDate >= dto.initialDate : 1 == 1
+                                                             && dto.endDate != null ? i.DueDate <= dto.endDate : 1 == 1))
                         .ToList();
 
                 if (bills.Count() == 0 || bills == null)
                 {
-                    throw new ArgumentException("Não existem contas neste período.");
+                    throw new ArgumentException("Não existem contas a serem mostradas");
                 }
+                GetBillDto billDto = new GetBillDto()
+                {
+                    initialDate = dto.initialDate,
+                    endDate = dto.endDate,
+                    bills = bills
+                };
 
-                return bills;
+                return billDto;
             }
             catch (ArgumentException ex)
             {
@@ -109,7 +121,7 @@ namespace Bills.Service.Services
             }
         }
 
-        public string UpdateBill(int id, Bill bill)
+        public async Task<string> UpdateBill(int id, Bill bill)
         {
             try
             {
@@ -137,7 +149,7 @@ namespace Bills.Service.Services
             }
         }
 
-        public string DeleteBill(int id)
+        public async Task<string> DeleteBill(int id)
         {
             try
             {
@@ -148,7 +160,7 @@ namespace Bills.Service.Services
                     throw new ArgumentException("Não foi possível deletar a finança.");
                 }
 
-                bill.Status = false;
+                bill.Status = 2;
                 //Adicionar alteração de status das parcelas também
                 _context.Update(bill);
 
@@ -165,12 +177,12 @@ namespace Bills.Service.Services
             }
         }
 
-        public Bill GetBill(int id, int userId)
+        public async Task<Bill> GetBill(int id, int userId)
         {
             throw new NotImplementedException();
         }
 
-        
+
         private DateOnly CalcInstallment(DateOnly dueDate, int installmentNumber)
         {
             DateOnly calcDate = new DateOnly();

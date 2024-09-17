@@ -16,6 +16,7 @@ builder.Services.AddDbContext<BillsProjectContext>(options =>
 
 // Registro de outros serviços
 builder.Services.AddScoped<IBillsService, BillsService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 var app = builder.Build();
