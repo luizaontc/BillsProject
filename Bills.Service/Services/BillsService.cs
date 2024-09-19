@@ -15,7 +15,7 @@ namespace Bills.Service.Services
             _context = context;
         }
 
-        public async Task<string> CreateBill(CreateBillDto dto)
+        public async Task<string> CreateBill(BillDto dto)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
