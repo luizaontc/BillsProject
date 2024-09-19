@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bills.Domain.Dto.Bills
 {
-    public class CreateBillDto
+    public class BillDto
     {
         public string billsName { get; set; }
         public string? description { get; set; }
