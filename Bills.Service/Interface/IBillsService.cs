@@ -6,7 +6,7 @@ namespace Bills.Service.Interface
 {
     public interface IBillsService
     {
-        Task<string> CreateBill(CreateBillDto bill);
+        Task<string> CreateBill(BillDto bill);
         Task<Bill> GetBill(int id, int userId);
         Task<GetBillDto> GetAllBills(FilterDto dto);
         Task<string> UpdateBill(int id,Bill bill);
