@@ -20,7 +20,7 @@ namespace Bills.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Bill>> CreateBill([FromBody] CreateBillDto dto)
+        public async Task<ActionResult<Bill>> CreateBill([FromBody] BillDto dto)
         {
             try
             {
