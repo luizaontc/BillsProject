@@ -1,4 +1,5 @@
-﻿using Bills.Domain.Dto;
+﻿using AutoMapper;
+using Bills.Domain.Dto;
 using Bills.Domain.Dto.Bills;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
@@ -9,10 +10,13 @@ namespace Bills.Service.Services
     public class BillsService : IBillsService
     {
         private readonly BillsProjectContext _context;
+        private readonly IMapper _mapper;
 
-        public BillsService(BillsProjectContext context)
+        public BillsService(BillsProjectContext context
+                            , IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<string> CreateBill(BillDto dto)
@@ -21,16 +25,9 @@ namespace Bills.Service.Services
             {
                 try
                 {
-                    Bill bill = new Bill()
-                    {
-                        BillsName = dto.billsName,
-                        Description = dto.description,
-                        Amount = dto.amount,
-                        DueDate = dto.dueDate,
-                        Status = dto.status,
-                        Installments = dto.installments,
-                        UserId = 1
-                    };
+                    Bill bill = _mapper.Map<Bill>(dto);
+
+                    bill.UserId = 1 ;
                     await _context.Bills.AddAsync(bill);
                     await _context.SaveChangesAsync();
 
@@ -121,47 +118,19 @@ namespace Bills.Service.Services
             }
         }
 
-        public async Task<string> UpdateBill(int id, Bill bill)
-        {
-            try
-            {
-                var billReturn = _context.Bills.Where(x => x.Id == id).FirstOrDefault();
-
-                if (billReturn == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                billReturn = bill;
-
-                _context.Update(billReturn);
-
-                return "Ok";
-
-            }
-            catch (ArgumentException ex)
-            {
-                throw new ArgumentException(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<string> DeleteBill(int id)
+        public async Task<string> UpdateBill(int id, BillDto dto)
         {
             try
             {
                 var bill = _context.Bills.Where(x => x.Id == id).FirstOrDefault();
 
-                if (bill != null)
+                if (bill == null)
                 {
-                    throw new ArgumentException("Não foi possível deletar a finança.");
+                    throw new ArgumentException();
                 }
 
-                bill.Status = 2;
-                //Adicionar alteração de status das parcelas também
+                bill = _mapper.Map<Bill>(dto);
+
                 _context.Update(bill);
 
                 return "Ok";
@@ -176,12 +145,6 @@ namespace Bills.Service.Services
                 throw new Exception(ex.Message);
             }
         }
-
-        public async Task<Bill> GetBill(int id, int userId)
-        {
-            throw new NotImplementedException();
-        }
-
 
         private DateOnly CalcInstallment(DateOnly dueDate, int installmentNumber)
         {

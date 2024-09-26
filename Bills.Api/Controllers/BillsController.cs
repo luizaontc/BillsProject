@@ -68,14 +68,13 @@ namespace Bills.Api.Controllers
             }
             catch (Exception ex)
             {
-                // Pode-se retornar um status code diferente baseado no tipo de erro
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
             }
         }
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBill(int id, Bill bill)
+        public async Task<IActionResult> UpdateBill(int id, BillDto bill)
         {
             try
             {
@@ -85,29 +84,6 @@ namespace Bills.Api.Controllers
                     return Ok(billReturn);
 
                 return NoContent();
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBill(int id)
-        {
-            try
-            {
-                var bill = await _billsService.DeleteBill(id);
-
-                if (bill == "Ok")
-                    return Ok(bill);
-
-                return NoContent();
-
             }
             catch (ArgumentException ex)
             {
