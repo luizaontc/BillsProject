@@ -10,20 +10,56 @@ namespace Bills.Service.Services
     {
         private readonly BillsProjectContext _context;
         private readonly IMapper _mapper;
+        private readonly IHashService _hashService;
 
         public UserService(BillsProjectContext context
-                          , IMapper mapper)
+                          , IMapper mapper
+                          , IHashService hashService)
         {
             _context = context;
             _mapper = mapper;
+            _hashService = hashService;
         }
-        public async Task<string> CreateUser(CreateUserDto dto)
+
+        public async Task<bool> Authenticate(LoginDto dto)
+        {
+            try
+            {
+                User user = null;
+
+                if (!string.IsNullOrEmpty(dto.email))
+                {
+                    user = await _context.Users.SingleOrDefaultAsync(u => u.Email == dto.email);
+                }
+                else if (!string.IsNullOrEmpty(dto.username))
+                {
+                    user = await _context.Users.SingleOrDefaultAsync(u => u.Username == dto.username);
+                }
+
+                if (user == null)
+                {
+                    throw new UnauthorizedAccessException("Credenciais inválidas.");
+                }
+
+                return _hashService.VerifyPassword(dto.password, user.PasswordHash, user.PasswordSalt);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> CreateUser(UserDto dto)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     User newUser = _mapper.Map<User>(dto);
+
+                    newUser.PasswordSalt = _hashService.GenerateSalt(128);
+                    newUser.PasswordHash = _hashService.ComputeHash(dto.pass, newUser.PasswordSalt);
 
                     await _context.Users.AddAsync(newUser);
                     await _context.SaveChangesAsync();
@@ -45,7 +81,7 @@ namespace Bills.Service.Services
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<string> UpdateUser(User user)
+        public Task<string> UpdateUser(UserDto user)
         {
             throw new NotImplementedException();
         }

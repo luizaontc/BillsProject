@@ -20,7 +20,7 @@ namespace Bills.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto dto)
+        public async Task<ActionResult<User>> CreateUser([FromBody] UserDto dto)
         {
             try
             {
@@ -48,6 +48,29 @@ namespace Bills.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [HttpPost("/login")]
+        public async Task<ActionResult<string>> DoLogin([FromBody] LoginDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var user = await _userService.Authenticate(dto);
+
+                if (!user)
+                    return Unauthorized("Credenciais inválidas.");
+
+                return Ok("Login bem-sucedido!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}"); // Melhor tratamento para erro genérico
             }
         }
     }

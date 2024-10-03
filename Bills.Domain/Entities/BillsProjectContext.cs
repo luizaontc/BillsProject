@@ -99,11 +99,20 @@ public partial class BillsProjectContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("document");
+            entity.Property(e => e.Email)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("email");
             entity.Property(e => e.Name)
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("name");
+            entity.Property(e => e.PasswordHash).HasMaxLength(64);
+            entity.Property(e => e.PasswordSalt).HasMaxLength(128);
             entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.Username)
+                .HasMaxLength(20)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.CurrencyNavigation).WithMany(p => p.Users)
                 .HasForeignKey(d => d.Currency)

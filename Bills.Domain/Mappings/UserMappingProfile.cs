@@ -8,8 +8,8 @@ namespace Bills.Domain.Mappings
     {
         public UserMappingProfile()
         {
-            CreateMap<User, CreateUserDto>();
-            CreateMap<CreateUserDto, User>();
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
 
         }
     }

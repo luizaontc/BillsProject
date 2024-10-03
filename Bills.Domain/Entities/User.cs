@@ -17,6 +17,14 @@ public partial class User
 
     public int? Currency { get; set; }
 
+    public byte[]? PasswordHash { get; set; }
+
+    public byte[]? PasswordSalt { get; set; }
+
+    public string? Username { get; set; }
+
+    public string? Email { get; set; }
+
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
     public virtual Currency? CurrencyNavigation { get; set; }

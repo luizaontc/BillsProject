@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bills.Api", "Bills.Api.csproj", "{96CA9367-4852-4BA1-B274-E1A1CC66C0E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bills.Service", "..\Bills.Service\Bills.Service.csproj", "{EE86AA11-90D9-41C4-A5B1-17E37F7519C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bills.Service", "..\Bills.Service\Bills.Service.csproj", "{EE86AA11-90D9-41C4-A5B1-17E37F7519C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bills.Domain", "..\Bills.Domain\Bills.Domain.csproj", "{20F4E9CE-88D6-4109-AC9D-53F96D3EA563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bills.Domain", "..\Bills.Domain\Bills.Domain.csproj", "{20F4E9CE-88D6-4109-AC9D-53F96D3EA563}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
