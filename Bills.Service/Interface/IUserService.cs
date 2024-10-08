@@ -1,5 +1,6 @@
 ﻿using Bills.Domain.Dto.Users;
 using Bills.Domain.Entities;
+using System.Security.Claims;
 
 namespace Bills.Service.Interface
 {
@@ -8,6 +9,6 @@ namespace Bills.Service.Interface
         Task<string> CreateUser(UserDto dto);
         Task<User> GetUser(int id);
         Task<string> UpdateUser(UserDto dto);
-        Task<bool> Authenticate(LoginDto dto);
+        Task<string> Authenticate(LoginDto dto);
     }
 }

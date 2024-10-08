@@ -63,10 +63,10 @@ namespace Bills.Api.Controllers
             {
                 var user = await _userService.Authenticate(dto);
 
-                if (!user)
+                if (string.IsNullOrEmpty(user))
                     return Unauthorized("Credenciais inválidas.");
 
-                return Ok("Login bem-sucedido!");
+                return Ok(user);
             }
             catch (Exception ex)
             {
