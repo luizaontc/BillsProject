@@ -10,5 +10,7 @@ namespace Bills.Service.Interface
         Task<User> GetUser(int id);
         Task<string> UpdateUser(UserDto dto);
         Task<string> Authenticate(LoginDto dto);
+        Task<User> ChangePassword(string newPass, long id);
+        Task<User> GeneratePasswordToken(string email);
     }
 }

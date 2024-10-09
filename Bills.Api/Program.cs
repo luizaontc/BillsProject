@@ -1,6 +1,9 @@
 using Bills.Domain.Entities;
+using Bills.Domain.Shared;
 using Bills.Service.Interface;
+using Bills.Service.Interface.Shared;
 using Bills.Service.Services;
+using Bills.Service.Services.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -23,6 +26,9 @@ builder.Services.AddDbContext<BillsProjectContext>(options =>
 builder.Services.AddScoped<IBillsService, BillsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IHashService, HashService>();
+builder.Services.AddScoped<ISendMailService, SendMailService>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddAuthentication(opt =>

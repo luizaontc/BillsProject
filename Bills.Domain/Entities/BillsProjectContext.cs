@@ -23,6 +23,8 @@ public partial class BillsProjectContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserPasswordToken> UserPasswordTokens { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=localhost;Database=BillsProject;User Id=login;Password=login;TrustServerCertificate=True;");
@@ -100,7 +102,6 @@ public partial class BillsProjectContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("document");
             entity.Property(e => e.Email)
-                .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("email");
             entity.Property(e => e.Name)
@@ -117,6 +118,29 @@ public partial class BillsProjectContext : DbContext
             entity.HasOne(d => d.CurrencyNavigation).WithMany(p => p.Users)
                 .HasForeignKey(d => d.Currency)
                 .HasConstraintName("FK_Users_Currency");
+        });
+
+        modelBuilder.Entity<UserPasswordToken>(entity =>
+        {
+            entity.HasKey(e => e.IdPasswordToken).HasName("PK__UserPass__1F2588823E5169A2");
+
+            entity.ToTable("UserPasswordToken");
+
+            entity.Property(e => e.IdPasswordToken).HasColumnName("idPasswordToken");
+            entity.Property(e => e.ExpiresIn)
+                .HasColumnType("datetime")
+                .HasColumnName("expiresIn");
+            entity.Property(e => e.IsUsed).HasColumnName("isUsed");
+            entity.Property(e => e.Token)
+                .HasMaxLength(256)
+                .IsUnicode(false)
+                .HasColumnName("token");
+            entity.Property(e => e.UserId).HasColumnName("userId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserPasswordTokens)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserPasswordToken_userId");
         });
 
         OnModelCreatingPartial(modelBuilder);

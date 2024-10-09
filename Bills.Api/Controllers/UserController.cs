@@ -3,6 +3,7 @@ using Bills.Domain.Dto.Users;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata;
 
 namespace Bills.Api.Controllers
@@ -68,9 +69,61 @@ namespace Bills.Api.Controllers
 
                 return Ok(user);
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro interno do servidor: {ex.Message}"); // Melhor tratamento para erro genérico
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}"); 
+            }
+        }
+
+        [HttpPost("/changePassword")]
+        public async Task<ActionResult<string>> ChangePassword([FromBody] LoginDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dto.password) || string.IsNullOrEmpty(dto.id.ToString()))
+                    throw new ArgumentException("Please fill the password!");
+
+                var user = await _userService.ChangePassword(dto.password, (long)dto.id);
+
+                return Ok(user);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+            }
+        }
+
+        [HttpPost("/generateChangePasswordToken")]
+        public async Task<ActionResult<string>> GenerateChangePasswordToken([FromQuery]string email)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                    return BadRequest("Email cannot be null");
+
+                var user = _userService.GeneratePasswordToken(email);
+
+                return "ok";
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
             }
         }
     }

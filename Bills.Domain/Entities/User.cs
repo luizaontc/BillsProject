@@ -28,4 +28,6 @@ public partial class User
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
     public virtual Currency? CurrencyNavigation { get; set; }
+
+    public virtual ICollection<UserPasswordToken> UserPasswordTokens { get; set; } = new List<UserPasswordToken>();
 }
