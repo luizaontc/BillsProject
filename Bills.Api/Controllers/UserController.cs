@@ -2,6 +2,7 @@
 using Bills.Domain.Dto.Users;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata;
@@ -34,6 +35,7 @@ namespace Bills.Api.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<User>> GetUser([FromQuery] int id)
         {

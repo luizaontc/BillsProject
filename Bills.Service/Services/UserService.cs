@@ -68,8 +68,8 @@ namespace Bills.Service.Services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "yourdomain.com",
-                audience: "yourdomain.com",
+                //issuer: "yourdomain.com",
+                //audience: "yourdomain.com",
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds);

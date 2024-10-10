@@ -2,6 +2,7 @@
 using Bills.Domain.Dto.Bills;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace Bills.Api.Controllers
             _billsService = billsService;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Bill>> CreateBill([FromBody] BillDto dto)
         {
@@ -33,6 +35,7 @@ namespace Bills.Api.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllBills([FromQuery] FilterDto dto)
         {
@@ -52,6 +55,7 @@ namespace Bills.Api.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Bill>> GetBill([FromRoute] int id)
         {
@@ -73,6 +77,7 @@ namespace Bills.Api.Controllers
         }
 
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBill(int id, BillDto bill)
         {
