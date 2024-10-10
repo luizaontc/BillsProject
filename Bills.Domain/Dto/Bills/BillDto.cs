@@ -9,6 +9,7 @@ namespace Bills.Domain.Dto.Bills
 {
     public class BillDto
     {
+        public int? userId { get; set; }
         public string billsName { get; set; }
         public string? description { get; set; }
         public DateOnly dueDate { get; set; }

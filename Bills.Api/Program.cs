@@ -1,3 +1,4 @@
+using Bills.Api.Filters;
 using Bills.Domain.Entities;
 using Bills.Domain.Shared;
 using Bills.Service.Interface;
@@ -15,7 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -90,6 +90,14 @@ builder.Services.AddScoped<IBillsService, BillsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ISendMailService, SendMailService>();
+builder.Services.AddScoped<InjectUserIdFilter>();
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<InjectUserIdFilter>();
+});
+
+
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Bills.Domain.Entities;
 
@@ -16,6 +17,6 @@ public partial class InstallmentBill
     public DateOnly? DueDate { get; set; }
 
     public bool? Status { get; set; }
-
+    [JsonIgnore]
     public virtual Bill? Bills { get; set; }
 }

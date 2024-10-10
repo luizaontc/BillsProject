@@ -1,4 +1,5 @@
-﻿using Bills.Domain.Dto;
+﻿using Bills.Api.Filters;
+using Bills.Domain.Dto;
 using Bills.Domain.Dto.Bills;
 using Bills.Domain.Entities;
 using Bills.Service.Interface;
@@ -26,6 +27,8 @@ namespace Bills.Api.Controllers
         {
             try
             {
+                dto.userId = Convert.ToInt32(HttpContext.User.FindFirst("UserId").Value);
+
                 await _billsService.CreateBill(dto);
                 return Ok();
             }
@@ -34,13 +37,17 @@ namespace Bills.Api.Controllers
                 return BadRequest(ex.Message.ToString());
             }
         }
-
+        [ServiceFilter(typeof(InjectUserIdFilter))]
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllBills([FromQuery] FilterDto dto)
         {
             try
             {
+                if (dto.userId == null)
+                    return Unauthorized("Your token expired!");
+                
+
                 var bills = await _billsService.GetAllBills(dto);
 
                 return Ok(bills);

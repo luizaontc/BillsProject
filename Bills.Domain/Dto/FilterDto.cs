@@ -12,5 +12,6 @@ namespace Bills.Domain.Dto
         public DateOnly? endDate { get; set; }
         public string? textFilter { get; set; }
         public int? category { get; set; }
+        public int? userId { get; set; }
     }
 }
